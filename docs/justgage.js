@@ -245,9 +245,25 @@
       // show value pointer
       pointer: kvLookup('pointer', config, dataset, false),
 
+      // pointer : bool
+      // show value pointer
+      pointerMin: kvLookup('pointerMin', config, dataset, false),
+
+      // pointer : bool
+      // show value pointer
+      pointerMax: kvLookup('pointerMax', config, dataset, false),
+
       // pointerOptions : object
       // define pointer look
       pointerOptions: kvLookup('pointerOptions', config, dataset, {}),
+
+      // pointerOptions : object
+      // define pointer look
+      pointerOptionsMin: kvLookup('pointerOptionsMax', config, dataset, {}),
+
+      // pointerOptions : object
+      // define pointer look
+      pointerOptionsMax: kvLookup('pointerOptionsMax', config, dataset, {}),
 
       // displayRemaining: boolean
       // replace display number with the number remaining to reach max
@@ -514,7 +530,7 @@
      * @param {Number} value display value
      * @returns SVG path string for gauge pointer
      */
-    obj.canvas.customAttributes.ndl = function (value) {
+    obj.canvas.customAttributes.ndlBase = function (value, pointerOptions) {
 
       var min = obj.config.min;
       var max = obj.config.max;
@@ -529,9 +545,9 @@
       var dlb = w / 15;
       var dw = w / 100;
 
-      if (obj.config.pointerOptions.toplength != null && obj.config.pointerOptions.toplength != undefined) dlt = obj.config.pointerOptions.toplength;
-      if (obj.config.pointerOptions.bottomlength != null && obj.config.pointerOptions.bottomlength != undefined) dlb = obj.config.pointerOptions.bottomlength;
-      if (obj.config.pointerOptions.bottomwidth != null && obj.config.pointerOptions.bottomwidth != undefined) dw = obj.config.pointerOptions.bottomwidth;
+      if (pointerOptions.toplength != null && pointerOptions.toplength != undefined) dlt = pointerOptions.toplength;
+      if (pointerOptions.bottomlength != null && pointerOptions.bottomlength != undefined) dlb = pointerOptions.bottomlength;
+      if (pointerOptions.bottomwidth != null && pointerOptions.bottomwidth != undefined) dw = pointerOptions.bottomwidth;
 
       var alpha, Ro, Ri, Cx, Cy, Xo, Yo, Xi, Yi, Xc, Yc, Xz, Yz, Xa, Ya, Xb, Yb, path;
 
@@ -605,6 +621,18 @@
       alpha, Ro, Ri, Cx, Cy, Xo, Yo, Xi, Yi, Xc, Yc, Xz, Yz, Xa, Ya, Xb, Yb, path = null;
     };
 
+    obj.canvas.customAttributes.ndl = function (value) {
+    	return obj.canvas.customAttributes.ndlBase(value, obj.config.pointerOptions);
+    }
+
+    obj.canvas.customAttributes.ndlMin = function (value) {
+    	return obj.canvas.customAttributes.ndlBase(50, obj.config.pointerOptionsMin);
+    }
+
+    obj.canvas.customAttributes.ndlMax = function (value) {
+    	return obj.canvas.customAttributes.ndlBase(80, obj.config.pointerOptionsMax);
+    }
+
     // gauge
     obj.gauge = obj.canvas.path().attr({
       "stroke": "none",
@@ -635,6 +663,39 @@
       if (obj.config.donut) {
         obj.needle.transform("r" + obj.config.donutStartAngle + ", " + (obj.params.widgetW / 2 + obj.params.dx) + ", " + (obj.params.widgetH / 2 + obj.params.dy));
       }
+
+    }
+
+    if (obj.config.pointerMin) {
+      // needle
+      obj.needleMin = obj.canvas.path().attr({
+        "stroke": !isUndefined(obj.config.pointerOptionsMin.stroke) ? obj.config.pointerOptionsMin.stroke : "none",
+        "stroke-width": !isUndefined(obj.config.pointerOptionsMin.stroke_width) ? obj.config.pointerOptionsMin.stroke_width : 0,
+        "stroke-linecap": !isUndefined(obj.config.pointerOptionsMin.stroke_linecap) ? obj.config.pointerOptionsMin.stroke_linecap : "square",
+        "fill": !isUndefined(obj.config.pointerOptionsMin.color) ? obj.config.pointerOptionsMin.color : "#000000",
+        ndlMin: [obj.config.min]
+      });
+
+      if (obj.config.donut) {
+        obj.needleMin.transform("r" + obj.config.donutStartAngle + ", " + (obj.params.widgetW / 2 + obj.params.dx) + ", " + (obj.params.widgetH / 2 + obj.params.dy));
+      }
+
+    }
+
+    if (obj.config.pointerMax) {
+      // needle
+      obj.needleMax = obj.canvas.path().attr({
+        "stroke": !isUndefined(obj.config.pointerOptionsMax.stroke) ? obj.config.pointerOptionsMax.stroke : "none",
+        "stroke-width": !isUndefined(obj.config.pointerOptionsMax.stroke_width) ? obj.config.pointerOptionsMax.stroke_width : 0,
+        "stroke-linecap": !isUndefined(obj.config.pointerOptionsMax.stroke_linecap) ? obj.config.pointerOptionsMax.stroke_linecap : "square",
+        "fill": !isUndefined(obj.config.pointerOptionsMax.color) ? obj.config.pointerOptionsMax.color : "#000000",
+        ndlMax: [obj.config.min]
+      });
+
+      if (obj.config.donut) {
+        obj.needleMax.transform("r" + obj.config.donutStartAngle + ", " + (obj.params.widgetW / 2 + obj.params.dx) + ", " + (obj.params.widgetH / 2 + obj.params.dy));
+      }
+
     }
 
     // value

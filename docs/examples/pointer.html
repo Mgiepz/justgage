@@ -83,6 +83,8 @@
         max: 100,
         symbol: '%',
         pointer: true,
+        pointerMin: true,
+        pointerMax: true,
         gaugeWidthScale: 0.6,
         customSectors: [{
           color: '#ff0000',
@@ -103,7 +105,18 @@
         max: 100,
         symbol: '%',
         pointer: true,
+        pointerMin: true,
+        pointerMax: false,
         pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        pointerOptionsMin: {
           toplength: -15,
           bottomlength: 10,
           bottomwidth: 12,
